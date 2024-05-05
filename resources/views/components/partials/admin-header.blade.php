@@ -35,7 +35,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.logout') }}">
-                                <i class="icon-mid bi bi-box-arrow-left me-2"></i>
+                                <i class="fa fa-right-from-bracket me-2"></i>
                                 Keluar
                             </a>
                         </li>
@@ -59,14 +59,14 @@
                             <h6 class="dropdown-header">Hello,
                                 {{ auth()->guard('karyawan')->user()->nama }}
                             </h6>
-                        </li>
+                        {{-- </li>
                             <i class="icon-mid bi bi-gear me-2"></i>
                                 Pengaturan
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a class="dropdown-item" href="{{ route('guru.logout') }}">
-                                <i class="icon-mid bi bi-box-arrow-left me-2"></i>
+                                <i class="fa fa-right-from-bracket me-2"></i>
                                 Keluar
                             </a>
                         </li>

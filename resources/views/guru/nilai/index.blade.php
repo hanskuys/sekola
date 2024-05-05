@@ -81,7 +81,6 @@
         <script>
             $(document).ready(function() {
     
-                // alert($("#filter-tahun").val());
                 var table = $('#datatable').DataTable({
                     processing: true,
                     serverSide: true,

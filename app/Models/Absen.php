@@ -17,13 +17,19 @@ class Absen extends Model
         'keterangan'
     ];
 
-    public function pelajaran()
+    public function tahun()
     {
-        return $this->belongsTo(Pelajaran::class, 'pelajaran_id');
+        return $this->belongsTo(TahunAjaran::class, 'tahun_id');
     }
 
-    public function siswa()
+    public function kelas()
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id');
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    
+    public function detail()
+    {
+        return $this->hasMany(AbsenDetail::class, 'absen_id');
     }
 }

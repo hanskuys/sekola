@@ -4,154 +4,144 @@ namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
 use App\Models\Absen;
-use App\Models\Karyawan_pelajaran;
+use App\Models\AbsenDetail;
+use App\Models\TahunAjaran;
 use App\Models\Kelas;
 use App\Models\Pelajaran;
 use App\Models\Siswa;
-use App\Models\Wali_kelas;
+
 use Dotenv\Util\Str;
 use Illuminate\Http\Request;
+use DataTables;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class AbsenController extends Controller
 {
     public function index(Request $request)
     {
-        $guru = $request->user();
-        $matpel = Karyawan_pelajaran::where('karyawan_id', $guru->id)->with('pelajaran')->get();
-        $kelases = Kelas::all();
-        $kelas_id = $request->kelas_id;
-        $pelajaran_id = $request->karyawan_pelajaran_id;
+        // dd($data);
 
-        // $siswas = Siswa::whereHas('kelases', function ($query) use ($guru) {
-        //     $query->where('karyawan_id', $guru->id);
-        // })->with('absen')->get();
+        if ($request->ajax()) {
+            
+            $data = Absen::with(['kelas', 'tahun'])
+            ->withCount(['detail as hadir' => function($query) {
+                $query->where('status', 'Hadir');
+            },'detail as izin' => function($query) {
+                $query->where('status', 'Izin');
+            }, 'detail as sakit' => function($query) {
+                $query->where('status', 'Sakit');
+            }, 'detail as alpa' => function($query) {
+                $query->where('status', 'Alpa');
+            }])
+            ->orderBy('id', 'DESC')->get();
+            
+            
+            return DataTables::of($data)
+            ->addColumn('action', function($row){
+                $btn = '<a class="btn btn-primary btn-sm" href='. route('guru.absen.show', ['id' => $row->id]) .'><i class="fa fa-list"></i> Detail</a>';
+                return $btn; 
+            })
+            ->addColumn('tgl', function($row){
+                $val = Carbon::parse($row->tgl)->translatedFormat('d F Y');
+                return $val; 
+            })
+            ->rawColumns(['action', 'tgl']) 
+            ->make(true);
+        }
 
-        // $kelases = Wali_kelas::where('karyawan_id', $guru->id)->with('kelas')->get();
-        // $matpel = Karyawan_pelajaran::where('karyawan_id', $guru->id)->get();
-        // $kelas_id = $request->kelas_id;
+        return view('guru.absen.index',[
 
-        // $dataSiswa = Siswa::whereHas('wali_kelas', function ($query) use ($kelas_id) {
-        //     $query->where('kelas_id', $kelas_id);
-        // })->with('absen')->get();
-
-        return view('dashboard.guru.absens.index', compact('kelases', 'matpel', 'kelas_id', 'pelajaran_id'));
+        ]);
     }
-
-    public function fetchStudentData(Request $request)
-    {
-        $guru = $request->user();
-        $matpel = Karyawan_pelajaran::where('karyawan_id', $guru->id)->with('pelajaran')->get();
-        $kelases = Kelas::all();
-
-        $kelas_id = $request->kelas_id;
-        $pelajaran_id = $request->karyawan_pelajaran_id;
-
-        $dataSiswa = Siswa::whereHas('wali_kelas', function ($query) use ($kelas_id) {
-            $query->where('kelas_id', $kelas_id);
-        })->get();
-
-        $dataAbsen = Absen::where('karyawan_pelajaran_id', $pelajaran_id)
-            ->with('siswa')
-            ->get()
-            ->groupBy('siswa_id');
-
-        foreach ($dataAbsen as $val) {
-            $siswaId = $val->first()->siswa_id;
-            $val->absHadir = Absen::where('siswa_id', $siswaId)
-                ->where('status', 'hadir')
-                ->count();
-        }
-        foreach ($dataAbsen as $val) {
-            $siswaId = $val->first()->siswa_id;
-
-            $val->absIzin = Absen::where('siswa_id', $siswaId)
-                ->where('status', 'izin')
-                ->count();
-        }
-        foreach ($dataAbsen as $val) {
-            $siswaId = $val->first()->siswa_id;
-
-            $val->absSakit = Absen::where('siswa_id', $siswaId)
-                ->where('status', 'sakit')
-                ->count();
-        }
-        foreach ($dataAbsen as $val) {
-            $siswaId = $val->first()->siswa_id;
-
-            $val->absTk = Absen::where('siswa_id', $siswaId)
-                ->where('status', 'tanpa keterangan')
-                ->count();
-        }
-        foreach ($dataAbsen as $val) {
-            $val->absTotal =  $val->absHadir + $val->absIzin + $val->absSakit + $val->absTk;
-        }
-
-
-
-        return view('dashboard.guru.absens.index', compact('kelases', 'kelas_id', 'matpel', 'pelajaran_id', 'dataSiswa', 'dataAbsen'));
-
-        // return response()->json(['siswa' => $dataSiswa]);
-    }
-
     // public function createAbsen(Request $request, string $id)
     public function create(Request $request)
     {
-        $guru = $request->user();
-        $matpel = Karyawan_pelajaran::where('karyawan_id', $guru->id)->with('pelajaran')->get();
+        $guru = auth()->guard('karyawan')->user();
+        $siswa = Siswa::whereHas('kelas', function($q) use($guru){
+            return $q->where('kelas_id', $guru->kelas->id);
+        })
+        ->orderBy('nama')->get();
 
-        $kelas_id = $request->query('kelas_id');
-        $pelajaran_id = $request->query('pelajaran_id');
+        $tahun = TahunAjaran::select('id as value', 'nama as label')
+        ->orderBy('nama')->get()->toArray();
 
-        $kelas = Kelas::where('id', $kelas_id)->first();
-        $pelajaran = Pelajaran::where('id', $pelajaran_id)->first();
-
-        // dd($kelas);
-
-        $dataSiswa = Siswa::whereHas('wali_kelas', function ($query) use ($kelas_id) {
-            $query->where('kelas_id', $kelas_id);
-        })->with('absen', 'kelases')->get();
-
-
-        return view('dashboard.guru.absens.create', compact('matpel', 'dataSiswa', 'kelas', 'pelajaran'));
+        return view('guru.absen.create',[
+            'tahun' => $tahun,
+            'siswa' => $siswa,
+        ]);
     }
 
     public function store(Request $request)
     {
-        // $siswa = $request->siswa_id;
-        // dd($siswa);
-        // foreach ($siswa as $siswa_id) {
-        //     Absen::create([
-        //         'siswa_id' => $siswa_id,
-        //         'karyawan_pelajaran_id' => $request->pelajaran_id,
-        //         'status' => $request->status,
-        //         'tanggal' => $request->tanggal,
-        //         'keterangan' => $request->keterangan,
-        //     ]);
-        // }
+        // dd($request->all());
+        $rules = [
+            'tahun' => 'required',
+            'smt' => 'required',
+            'tgl' => 'required',
+            'line.*.status' => 'required',
+        ];
 
-        $siswa_ids = $request->siswa_id;
-        $statuses = $request->status;
-        $keterangans = $request->keterangan;
+        // Define custom error messages
+        $messages = [
+            'tahun.required' => 'Tahun ajaran harus diisi',
+            'smt.required' => 'Semester harus diisi',
+            'type.required' => 'Jenis nilai harus diisi',
+            'pelajaran.required' => 'Mata pelajaran harus diisi',
+            'line.*.status.required' => 'Status wajib diisi',
+        ];
 
-        foreach ($siswa_ids as $key => $siswa_id) {
-            Absen::create([
-                'siswa_id' => $siswa_id,
-                'karyawan_pelajaran_id' => $request->pelajaran_id,
-                'status' => $statuses[$key],
-                'tanggal' => $request->tanggal,
-                'keterangan' => $keterangans[$key] ?? '-',
-            ]);
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()){
+            return back()->withInput()->withErrors($validator->errors());
+        }else{
+            DB::beginTransaction();
+            try{
+
+                $guru = auth()->guard('karyawan')->user();
+                $data = new Absen();
+                $data->tahun_id = $request->tahun;
+                $data->kelas_id = $guru->kelas->id;
+                $data->semester = $request->smt;
+                $data->guru_id = $guru->id;
+                $data->tgl = $request->tgl;
+                $data->save();
+
+                foreach($request->lines as $i){
+                    $line = new AbsenDetail();
+                    $line->siswa_id = $i['siswa_id'];
+                    $line->status = $i['status'];
+                    $data->detail()->save($line);
+                }
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return back();
+            }
+            DB::commit();
+            return redirect()->route('guru.absen.index')->with('success', 'Successfully Created Nilai Siswa');
         }
 
+    }
 
-        return redirect()->to('guru/absens')->with('Successfully Created Absen Siswa');
+    public function show($id)
+    {
+        $data = Absen::with(['kelas', 'tahun'])->where('id', $id)->first();
+        $lines = AbsenDetail::with('siswa')
+        ->where('absen_id', $data->id)->get();
+
+        return view('guru.absen.show', [
+            'data' => $data,
+            'lines' => $lines
+        ]);
     }
 
     public function edit(Request $request, string $id)
     {
         $siswa = Siswa::where('id', $id)->with('absen')->first();
 
-        return view('dashboard.guru.absens.edit', compact('siswa'));
+        return view('guru.absen.edit', compact('siswa'));
     }
 
     public function update(Request $request, string $id)

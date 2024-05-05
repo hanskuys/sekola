@@ -39,11 +39,11 @@
                     </a>
                 </li>
 
-                @if(auth()->guard()->user()->wali_keals)
+                @if(auth()->guard('karyawan')->user()->kelas)
                 <li
                     class="sidebar-item {{ (request()->is('guru/absen*')) ? "active" : "" }}">
                     <a href="{{ route('guru.absen.index') }}" class='sidebar-link'>
-                        <i class="bi bi-grid-fill"></i>
+                        <i class="fa fa-list-check"></i>
                         <span>Data Absen</span>
                     </a>
                 </li>
@@ -52,18 +52,18 @@
                 <li
                     class="sidebar-item {{ (request()->is('guru/siswa*')) ? "active" : "" }}">
                     <a href="{{ route('guru.siswa.index') }}" class='sidebar-link'>
-                        <i class="bi bi-grid-fill"></i>
+                        <i class="fa fa-users"></i>
                         <span>Data Siswa</span>
                     </a>
                 </li>
 
-                <li
+                {{-- <li
                     class="sidebar-item">
                     <a href="{{ route('guru.logout') }}" class='sidebar-link'>
-                        <i class="fa fa-logout"></i>
+                        <i class="fa fa-right-from-bracket"></i>
                         <span>Logout</span>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </div>
     </div>
