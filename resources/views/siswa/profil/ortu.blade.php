@@ -11,112 +11,84 @@
         <div class="section">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('siswa.profil.detail') }}" method="POST">
+                    <form action="{{ route('siswa.profil.ortu')}}" method="POST">
                         @csrf
-                    
+                        <h3 class="fs-5 mb-2 fw-bold">Data Ayah</h3>
+                        <hr/>
                         <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="nokk" id="nokk" label="Nomor Kartu Keluarga" value="{{ old('nokk', $data->nokk ?? '') }}" error="{{ $errors->first('nokk') }}" />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nik_ayah" id="nik_ayah" label="NIK" value="{{ old('nik_ayah', $data->nik_ayah ?? '') }}" error="{{ $errors->first('nik_ayah') }}" />
                             </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="no_akta" id="no_akta" label="Nomor Akta Kelahiran" value="{{ old('no_akta', $data->no_akta ?? '') }}" error="{{ $errors->first('no_akta') }}" />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nama_ayah" id="nama_ayah" label="Nama" value="{{ old('nama_ayah', $data->nama_ayah ?? '') }}" error="{{ $errors->first('nama_ayah') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="lahir_ayah" id="lahir_ayah"  inputClass="tgl" label="Tanggal Lahir" value="{{ old('lahir_ayah', $data->lahir_ayah ?? '') }}" error="{{ $errors->first('lahir_ayah') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pendidikan_ayah" id="pendidikan_ayah" label="Pendidikan" value="{{ old('pendidikan_ayah', $data->pendidikan_ayah ?? '') }}" error="{{ $errors->first('pendidikan_ayah') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pekerjaan_ayah" id="pekerjaan_ayah" label="Pekerjaan" value="{{ old('pekerjaan_ayah', $data->pekerjaan_ayah ?? '') }}" error="{{ $errors->first('pekerjaan_ayah') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="penghasilan_ayah" id="penghasilan_ayah"  label="Penghasilan" value="{{ old('penghasilan_ayah', $data->penghasilan_ayah ?? '') }}" error="{{ $errors->first('penghasilan_ayah') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="no_telp_ayah" id="no_telp_ayah"  label="No Telepon/HP" value="{{ old('no_telp_ayah', $data->no_telp_ayah ?? '') }}" error="{{ $errors->first('no_telp_ayah') }}" />
                             </div>
                         </div>
-                    
-                        {{-- agama&kewarga --}}
+                        <h3 class="fs-5 mb-2 fw-bold">Data Ibu</h3>
+                        <hr/>
                         <div class="row">
-                            <div class="col-md-6">
-                                <x-select-field
-                                    label="Agama"
-                                    name="agama"
-                                    id="agama"
-                                    value="{{ old('agama', $data->agama ?? '') }}"
-                                    placeholder="Pilih Agama"
-                                    :options="[
-                                        ['value' => 'Islam', 'label' => 'Islam'],
-                                        ['value' => 'Kristen Protestan', 'label' => 'Kristen Protestan'],
-                                        ['value' => 'Kristen Katolik', 'label' => 'Kristen Katolik'],
-                                        ['value' => 'Hindu', 'label' => 'Hindu'],
-                                        ['value' => 'Budha', 'label' => 'Budha'],
-                                        ['value' => 'Konghucu', 'label' => 'Konghucu']
-                                    ]"
-                                />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nik_ibu" id="nik_ibu" label="NIK" value="{{ old('nik_ibu', $data->nik_ibu ?? '') }}" error="{{ $errors->first('nik_ibu') }}" />
                             </div>
-                            <div class="col-md-6">
-                                <x-select-field
-                                    label="Kewarganegaraan"
-                                    name="kewarganegaraan"
-                                    id="kewarganegaraan"
-                                    value="{{ old('kewarganegaraan', $data->kewarganegaraan ?? '') }}"
-                                    placeholder="Pilih Kewarganegaraan"
-                                    :options="[
-                                        ['value' => 'WNI', 'label' => 'WNI'],
-                                        ['value' => 'WNA', 'label' => 'WNA']
-                                    ]"
-                                />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nama_ibu" id="nama_ibu" label="Nama" value="{{ old('nama_ibu', $data->nama_ibu ?? '') }}" error="{{ $errors->first('nama_ibu') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="lahir_ibu" id="lahir_ibu"  inputClass="tgl" label="Tanggal Lahir" value="{{ old('lahir_ibu', $data->lahir_ibu ?? '') }}" error="{{ $errors->first('lahir_ibu') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pendidikan_ibu" id="pendidikan_ibu" label="Pendidikan" value="{{ old('pendidikan_ibu', $data->pendidikan_ibu ?? '') }}" error="{{ $errors->first('pendidikan_ibu') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pekerjaan_ibu" id="pekerjaan_ibu" label="Pekerjaan" value="{{ old('pekerjaan_ibu', $data->pekerjaan_ibu ?? '') }}" error="{{ $errors->first('pekerjaan_ibu') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="penghasilan_ibu" id="penghasilan_ibu"  label="Penghasilan" value="{{ old('penghasilan_ibu', $data->penghasilan_ibu ?? '') }}" error="{{ $errors->first('penghasilan_ibu') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="no_telp_ibu" id="no_telp_ibu"  label="No Telepon/HP" value="{{ old('no_telp_ibu', $data->no_telp_ibu ?? '') }}" error="{{ $errors->first('no_telp_ibu') }}" />
                             </div>
                         </div>
-                    
-                        {{-- kip&prestasi --}}
+                        <h3 class="fs-5 mb-2 fw-bold">Data Wali (Opsional)</h3>
+                        <hr/>
                         <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="kip" id="kip" label="No Kartu Indonesia Pintar (No KIP) 6 Digit" value="{{ old('kip', $data->kip ?? '') }}" error="{{ $errors->first('kip') }}" />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nik_wali" id="nik_wali" label="NIK" value="{{ old('nik_wali', $data->nik_wali ?? '') }}" error="{{ $errors->first('nik_wali') }}" />
                             </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="prestasi" id="prestasi" label="Prestasi" value="{{ old('prestasi', $data->prestasi ?? '') }}" error="{{ $errors->first('prestasi') }}" />
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="nama_wali" id="nama_wali" label="Nama" value="{{ old('nama_wali', $data->nama_wali ?? '') }}" error="{{ $errors->first('nama_wali') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="lahir_wali" id="lahir_wali"  inputClass="tgl" label="Tanggal Lahir" value="{{ old('lahir_wali', $data->lahir_wali ?? '') }}" error="{{ $errors->first('lahir_wali') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pendidikan_wali" id="pendidikan_wali" label="Pendidikan" value="{{ old('pendidikan_wali', $data->pendidikan_wali ?? '') }}" error="{{ $errors->first('pendidikan_wali') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="pekerjaan_wali" id="pekerjaan_wali" label="Pekerjaan" value="{{ old('pekerjaan_wali', $data->pekerjaan_wali ?? '') }}" error="{{ $errors->first('pekerjaan_wali') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="penghasilan_wali" id="penghasilan_wali"  label="Penghasilan" value="{{ old('penghasilan_wali', $data->penghasilan_wali ?? '') }}" error="{{ $errors->first('penghasilan_wali') }}" />
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-field type="text" name="no_telp_wali" id="no_telp_wali"  label="No Telepon/HP" value="{{ old('no_telp_wali', $data->no_telp_wali ?? '') }}" error="{{ $errors->first('no_telp_wali') }}" />
                             </div>
                         </div>
-                    
-                        {{-- jumlahsodara&anakke --}}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="anak_ke" id="anak_ke" label="Anak Ke" value="{{ old('anak_ke', $data->anak_ke ?? '') }}" error="{{ $errors->first('anak_ke') }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="jumlah_sodara" id="jumlah_sodara" label="Jumlah Sodara" value="{{ old('jumlah_sodara', $data->jumlah_sodara ?? '') }}" error="{{ $errors->first('jumlah_sodara') }}" />
-                            </div>
-                        </div>
-                    
-                        {{-- tb&bb --}}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="tb" id="tb" label="Tinggi Badan" value="{{ old('tb', $data->tb ?? '') }}" error="{{ $errors->first('tb') }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="bb" id="bb" label="Berat Badan" value="{{ old('bb', $data->bb ?? '') }}" error="{{ $errors->first('bb') }}" />
-                            </div>
-                        </div>
-                    
-                        {{-- tinggal_bersama&moda_transportasi --}}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="tinggal_bersama" id="tinggal_bersama" label="Tinggal Bersama" value="{{ old('tinggal_bersama', $data->tinggal_bersama ?? '') }}" error="{{ $errors->first('tinggal_bersama') }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="moda_transportasi" id="moda_transportasi" label="Moda Transportasi" value="{{ old('moda_transportasi', $data->moda_transportasi ?? '') }}" error="{{ $errors->first('moda_transportasi') }}" />
-                            </div>
-                        </div>
-                    
-                        {{-- lintang&bujur --}}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="lintang" id="lintang" label="Koordinat Lintang" value="{{ old('lintang', $data->lintang ?? '') }}" error="{{ $errors->first('lintang') }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="bujur" id="bujur" label="Koordinat Bujur" value="{{ old('bujur', $data->bujur ?? '') }}" error="{{ $errors->first('bujur') }}" />
-                            </div>
-                        </div>
-                    
-                        {{-- jarak&waktu --}}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="jarak_rumah" id="jarak_rumah" label="Jarak Tempuh" value="{{ old('jarak_rumah', $data->jarak_rumah ?? '') }}" error="{{ $errors->first('jarak_rumah') }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <x-input-field type="text" name="waktu_tempuh" id="waktu_tempuh" label="Waktu Tempuh" value="{{ old('waktu_tempuh') }}" />                   
-                            </div>
-                        </div>
-    
+
                         <div class="text-end">
                             <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
                         </div>

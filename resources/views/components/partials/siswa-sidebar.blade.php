@@ -45,12 +45,40 @@
                     <a href="{{ route('siswa.profil.detail') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Data Lengkap</span>
+                        @if (auth()->user()->detail == null)
+                            <div class="d-block position-absolute" style="right: 15px;top: 12px;">
+                                <i class="fa fa-warning text-warning"></i>
+                            </div>
+                        @endif
                     </a>
                 </li>
                 <li class="sidebar-item {{ (request()->is('siswa/profil/ortu')) ? "active" : "" }}">
                     <a href="{{ route('siswa.profil.ortu') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Data Orang Tua</span>
+                        @if (auth()->user()->ortu == null)
+                            <div class="d-block position-absolute" style="right: 15px;top: 12px;">
+                                <i class="fa fa-warning text-warning"></i>
+                            </div>
+                        @endif
+                    </a>
+                </li>
+                <li class="sidebar-item {{ (request()->is('siswa/profil/dapodik')) ? "active" : "" }}">
+                    <a href="{{ route('siswa.profil.dapodik') }}" class='sidebar-link'>
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Data Dapodik</span>
+                        @if (auth()->user()->dapodik == null)
+                            <div class="d-block position-absolute" style="right: 15px;top: 12px;">
+                                <i class="fa fa-warning text-warning"></i>
+                            </div>
+                        @endif
+                    </a>
+                </li>
+                <li
+                    class="sidebar-item">
+                    <a href="{{ route('siswa.logout') }}" class='sidebar-link'>
+                        <i class="fa fa-right-from-bracket"></i>
+                        <span>Logout</span>
                     </a>
                 </li>
                 @endif

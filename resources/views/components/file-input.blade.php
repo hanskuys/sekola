@@ -11,8 +11,4 @@
     @else
         <div id="error-{{ $id }}" class="text-danger"></div>
     @endif
-    @if($type == 'file' && !empty($value))
-        <a href="{{ asset($value) }}" target="_blank" class="btn btn-primary mt-2">Lihat Dokumen</a>
-    @endif
-    
 </div>

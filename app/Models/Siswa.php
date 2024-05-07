@@ -44,6 +44,16 @@ class Siswa extends Authenticatable implements AuthenticatableContract
     {
         return $this->HasOne(SiswaDetail::class, 'siswa_id', 'id');
     }
+    
+    public function ortu(): HasOne
+    {
+        return $this->HasOne(SiswaOrtu::class, 'siswa_id', 'id');
+    }
+
+    public function dapodik(): HasOne
+    {
+        return $this->HasOne(SiswaDapodik::class, 'siswa_id', 'id');
+    }
 
     public function kelas(): HasMany
     {

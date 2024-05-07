@@ -120,8 +120,17 @@
                             </div>
                         </div>
     
+                        <div class="row">
+                            <div class="col-md-6">
+                                <x-input-field type="text" name="asal_sekolah" id="asal_sekolah" label="Asal Sekolah" value="{{ old('asal_sekolah', $data->asal_sekolah ?? '') }}" error="{{ $errors->first('asal_sekolah') }}" />
+                            </div>
+                            <div class="col-md-6">
+                                <x-input-field type="text" name="no_ijazah" id="no_ijazah" label="Asal Sekolah" value="{{ old('no_ijazah', $data->no_ijazah ?? '') }}" error="{{ $errors->first('no_ijazah') }}" />
+                            </div>
+                        </div>
+
                         <div class="text-end">
-                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                            <button type="submit" class="btn btn-primary me-1 mb-1">Simpan</button>
                         </div>
                     </form>
                 </div>

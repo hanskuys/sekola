@@ -14,6 +14,7 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        // dd(empty(auth()->user()->detail) || empty(auth()->user()->ortu)); 
         $siswa = $request->user();
 
         $kelas = KelasBridge::where('siswa_id', $siswa->id)->first();

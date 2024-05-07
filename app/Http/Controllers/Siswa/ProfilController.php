@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use App\Models\SiswaOrtu;
 use App\Models\SiswaDetail;
+use App\Models\SiswaDapodik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -55,17 +56,25 @@ class ProfilController extends Controller
 
             DB::beginTransaction();
             try{
-                $data = new Karyawan();
-                $data->nip = $request->nip;
-                $data->nuptk = $request->nuptk;
-                $data->nbm = $request->nbm;
-                $data->nama = $request->nama;
-                $data->jk = $request->jk;
-                $data->tmp_lahir = $request->tmp_lahir;
-                $data->tgl_lahir = $request->tgl_lahir;
-                $data->tgl_mulai = $request->tgl_mulai;
-                $data->email = $request->email;
-                $data->password = Hash::make($request->password);
+                $data = SiswaDetail::updateOrCreate(
+                    ['siswa_id' =>  $user->id]
+                );
+                $nokk = $request->nokk;
+                $no_akta = $request->no_akta;
+                $agama = $request->agama;
+                $kewarganegaraan = $request->kewarganegaraan;
+                $kip = $request->kip;
+                $prestasi = $request->prestasi;
+                $anak_ke = $request->anak_ke;
+                $jumlah_sodara = $request->jumlah_sodara;
+                $tb = $request->tb;
+                $bb = $request->bb;
+                $tinggal_bersama = $request->tinggal_bersama;
+                $moda_transportasi = $request->moda_transportasi;
+                $lintang = $request->lintang;
+                $bujur = $request->bujur;
+                $jarak_rumah = $request->jarak_rumah;
+                $waktu_tempuh = $request->waktu_tempuh;
                 $data->save();
 
             }catch(\QueryException $e){
@@ -75,7 +84,7 @@ class ProfilController extends Controller
                 ], 422);
             }
             DB::commit();
-            return redirect()->to('/admin/gurus')->with('success', 'Successfully Updated Guru');
+            return redirect()->route('siswa.profil.detail')->with('success', 'Successfully Updated Guru');
 
         }
     }
@@ -145,17 +154,15 @@ class ProfilController extends Controller
 
     public function ortu(Request $request)
     {
-        $siswa = $request->user();
-
-        $data = SiswaOrtu::where('siswa_id', $siswa->id)->first();
+        $user = auth()->guard('siswa')->user();
+        $data = SiswaOrtu::where('siswa_id', $user->id)->first();
 
         return view('siswa.profil.ortu', compact('data'));
     }
 
-    public function update_ortu(Request $request, string $id)
+    public function ortuStore(Request $request)
     {
-        $siswa = $request->user();
-        $validate = $request->validate([
+        $rules = [
             'nama_ayah' => 'required',
             'nama_ibu' => 'required',
             'nama_wali' => 'nullable',
@@ -177,263 +184,119 @@ class ProfilController extends Controller
             'no_telp_ayah' => 'required',
             'no_telp_ibu' => 'required',
             'no_telp_wali' => 'nullable',
-        ]);
+        ];
+        $messages = [
+            'required' => 'Kolom :attribute harus diisi.',
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator->errors());
+        }else{
+            
 
-        if ($id == 'new') {
-            // Ini operasi insert (baru)
-            DataOrtuSiswa::create([
-                'siswa_id' => $siswa->id,
-                'nama_ayah' => $validate['nama_ayah'],
-                'nama_ibu' => $validate['nama_ibu'],
-                'nama_wali' => $validate['nama_wali'],
-                'nik_ayah' => $validate['nik_ayah'],
-                'nik_ibu' => $validate['nik_ibu'],
-                'nik_wali' => $validate['nik_wali'],
-                'lahir_ayah' => $validate['lahir_ayah'],
-                'lahir_ibu' => $validate['lahir_ibu'],
-                'lahir_wali' => $validate['lahir_wali'],
-                'pendidikan_ayah' => $validate['pendidikan_ayah'],
-                'pendidikan_ibu' => $validate['pendidikan_ibu'],
-                'pendidikan_wali' => $validate['pendidikan_wali'],
-                'pekerjaan_ayah' => $validate['pekerjaan_ayah'],
-                'pekerjaan_ibu' => $validate['pekerjaan_ibu'],
-                'pekerjaan_wali' => $validate['pekerjaan_wali'],
-                'penghasilan_ayah' => $validate['penghasilan_ayah'],
-                'penghasilan_ibu' => $validate['penghasilan_ibu'],
-                'penghasilan_wali' => $validate['penghasilan_wali'],
-                'no_telp_ayah' => $validate['no_telp_ayah'],
-                'no_telp_ibu' => $validate['no_telp_ibu'],
-                'no_telp_wali' => $validate['no_telp_wali']
-            ]);
-        } else {
-            // Ini operasi update
-            DataOrtuSiswa::where('id', $id)->update([
-                'siswa_id' => $siswa->id,
-                'nama_ayah' => $validate['nama_ayah'],
-                'nama_ibu' => $validate['nama_ibu'],
-                'nama_wali' => $validate['nama_wali'],
-                'nik_ayah' => $validate['nik_ayah'],
-                'nik_ibu' => $validate['nik_ibu'],
-                'nik_wali' => $validate['nik_wali'],
-                'lahir_ayah' => $validate['lahir_ayah'],
-                'lahir_ibu' => $validate['lahir_ibu'],
-                'lahir_wali' => $validate['lahir_wali'],
-                'pendidikan_ayah' => $validate['pendidikan_ayah'],
-                'pendidikan_ibu' => $validate['pendidikan_ibu'],
-                'pendidikan_wali' => $validate['pendidikan_wali'],
-                'pekerjaan_ayah' => $validate['pekerjaan_ayah'],
-                'pekerjaan_ibu' => $validate['pekerjaan_ibu'],
-                'pekerjaan_wali' => $validate['pekerjaan_wali'],
-                'penghasilan_ayah' => $validate['penghasilan_ayah'],
-                'penghasilan_ibu' => $validate['penghasilan_ibu'],
-                'penghasilan_wali' => $validate['penghasilan_wali'],
-                'no_telp_ayah' => $validate['no_telp_ayah'],
-                'no_telp_ibu' => $validate['no_telp_ibu'],
-                'no_telp_wali' => $validate['no_telp_wali']
-            ]);
+            $user = auth()->guard('siswa')->user();
+            DB::beginTransaction();
+            try{
+                $data = SiswaOrtu::updateOrCreate(
+                    ['siswa_id' =>  $user->id]
+                );
+                $data->nama_ayah = $request->nama_ayah;
+                $data->nama_ibu = $request->nama_ibu;
+                $data->nama_wali = $request->nama_wali;
+                $data->nik_ayah = $request->nik_ayah;
+                $data->nik_ibu = $request->nik_ibu;
+                $data->nik_wali = $request->nik_wali;
+                $data->lahir_ayah = $request->lahir_ayah;
+                $data->lahir_ibu = $request->lahir_ibu;
+                $data->lahir_wali = $request->lahir_wali;
+                $data->pendidikan_ayah = $request->pendidikan_ayah;
+                $data->pendidikan_ibu = $request->pendidikan_ibu;
+                $data->pendidikan_wali = $request->pendidikan_wali;
+                $data->pekerjaan_ayah = $request->pekerjaan_ayah;
+                $data->pekerjaan_ibu = $request->pekerjaan_ibu;
+                $data->pekerjaan_wali = $request->pekerjaan_wali;
+                $data->penghasilan_ayah = $request->penghasilan_ayah;
+                $data->penghasilan_ibu = $request->penghasilan_ibu;
+                $data->penghasilan_wali = $request->penghasilan_wali;
+                $data->no_telp_ayah = $request->no_telp_ayah;
+                $data->no_telp_ibu = $request->no_telp_ibu;
+                $data->no_telp_wali = $request->no_telp_wali;
+                $data->save();
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return response()->json([
+                    'message' => 'Terjadi Kesalahan Server!',
+                ], 422);
+            }
+            DB::commit();
+            return redirect()->route('siswa.profil.ortu')->with('success', 'Successfully Add Data');
         }
-        return redirect()->to('/siswa/data-ortu')->with('success', 'Successfully Add Data');
     }
 
-    public function tambahan(Request $request)
+    public function dapodik(Request $request)
     {
         $siswa = $request->user();
 
-        $data = DataTambahanSiswa::where('siswa_id', $siswa->id)->first();
+        $data = SiswaDapodik::where('siswa_id', $siswa->id)->first();
 
-        return view('dashboard.siswa.data-tambahan', compact('data'));
+        return view('siswa.profil.dapodik', compact('data'));
     }
 
-    public function update_tambahan(Request $request, string $id)
+    public function dapodikStore(Request $request)
     {
-        // dd($request);
-        $siswa = $request->user();
-        $validate = $request->validate([
+        // dd($request->all());
+        $rules = [
             'asal_sekolah' => 'required',
             'nis' => 'required',
             'nomor_peserta' => 'required',
             'nomor_ijasah' => 'required',
             'hobi' => 'required',
             'cita_cita' => 'required',
-            'doc_ijasah' => 'nullable|image|mimes:jpeg,png,jpg',
-            'doc_akte' => 'nullable|image|mimes:jpeg,png,jpg',
-            'doc_kk' => 'nullable|image|mimes:jpeg,png,jpg',
-            'doc_ktp' => 'nullable|image|mimes:jpeg,png,jpg',
-            'doc_kip' => 'nullable|image|mimes:jpeg,png,jpg'
-        ]);
-        // dd($validate);
-        
-        // Inisialisasi data
-        $data = [
-            'siswa_id' => $siswa->id,
-            'asal_sekolah' => $validate['asal_sekolah'],
-            'nis' => $validate['nis'],
-            'nomor_peserta' => $validate['nomor_peserta'],
-            'nomor_ijasah' => $validate['nomor_ijasah'],
-            'hobi' => $validate['hobi'],
-            'cita_cita' => $validate['cita_cita'],
+            'doc_ijazah' => 'mimes:pdf,jpg,jpeg,png',
+            'doc_akte' => 'mimes:pdf,jpg,jpeg,png',
+            'doc_kk' => 'mimes:pdf,jpg,jpeg,png',
+            'doc_ktp' => 'mimes:pdf,jpg,jpeg,png',
+            'doc_kip' => 'mimes:pdf,jpg,jpeg,png'
         ];
-
-        // Operasi insert atau update
-        if ($id == 'new') {
-            $this->uploadAndSaveImage($request, 'doc_ijasah', $data);
-            $this->uploadAndSaveImage($request, 'doc_akte', $data);
-            $this->uploadAndSaveImage($request, 'doc_kk', $data);
-            $this->uploadAndSaveImage($request, 'doc_ktp', $data);
-            $this->uploadAndSaveImage($request, 'doc_kip', $data);
-
-            // Ini operasi insert (baru)
-            DataTambahanSiswa::create($data);
-        } else {
-            $this->uploadAndSaveImage($request, 'doc_ijasah', $data);
-            $this->uploadAndSaveImage($request, 'doc_akte', $data);
-            $this->uploadAndSaveImage($request, 'doc_kk', $data);
-            $this->uploadAndSaveImage($request, 'doc_ktp', $data);
-            $this->uploadAndSaveImage($request, 'doc_kip', $data);
-
-            // Ini operasi update
-            DataTambahanSiswa::where('id', $id)->update($data);
-        }
-
-        // if ($id == 'new') {
-        //     // dd($id);
-        //     // Ini operasi insert (baru)
-        //     DataTambahanSiswa::create([
-        //         'siswa_id' => $siswa->id,
-        //         'asal_sekolah' => $validate['asal_sekolah'],
-        //         'nis' => $validate['nis'],
-        //         'nomor_peserta' => $validate['nomor_peserta'],
-        //         'nomor_ijasah' => $validate['nomor_ijasah'],
-        //         'hobi' => $validate['hobi'],
-        //         'cita_cita' => $validate['cita_cita'],
-
-        //         // 'doc_ijasah' => $validate['doc_ijasah'],
-        //         'doc_akte' => $validate['doc_akte'],
-        //         // 'doc_kk' => $validate['doc_kk'],
-        //         // 'doc_ktp' => $validate['doc_ktp'],
-        //         // 'doc_kip' => $validate['doc_kip'],
-        //     ]);
-        // } else {
-        //     // Ini operasi update
-        //     DataTambahanSiswa::where('id', $id)->update([
-        //         'siswa_id' => $siswa->id,
-        //         'asal_sekolah' => $validate['asal_sekolah'],
-        //         'nis' => $validate['nis'],
-        //         'nomor_peserta' => $validate['nomor_peserta'],
-        //         'nomor_ijasah' => $validate['nomor_ijasah'],
-        //         'hobi' => $validate['hobi'],
-        //         'cita_cita' => $validate['cita_cita'],
-        //         // 'doc_ijasah' => $validate['doc_ijasah'],
-        //         'doc_akte' => $validate['doc_akte'],
-        //         // 'doc_kk' => $validate['doc_kk'],
-        //         // 'doc_ktp' => $validate['doc_ktp'],
-        //         // 'doc_kip' => $validate['doc_kip'],
-        //     ]);
-        // }
-
-        return redirect()->to('/siswa/data-tambahan')->with('success', 'Successfully Add Data');
-    }
-
-    protected function uploadAndSaveImage($request, $fieldName, &$data)
-    {
-        if ($request->hasFile($fieldName)) {
-            // Hapus gambar lama jika ada
-            if (isset($data[$fieldName])) {
-                Storage::delete('public/images/dokumenPendaftaran/' . $data[$fieldName]);
-            }
-
-            // Simpan gambar baru
-            $image = $request->file($fieldName);
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            Storage::putFileAs('public/images/dokumenPendaftaran/', $image, $imageName);
-
-            // Simpan nama gambar ke dalam data
-            $data[$fieldName] = $imageName;
-        }
-    }
-
-    public function lengkap(Request $request){
-        $siswa = $request->user();
-
-        $data = DataLengkapSiswa::where('siswa_id', $siswa->id)->first();
-
-        return view('dashboard.siswa.data-lengkap', compact('data'));
-    }
-
-    public function update_lengkap(Request $request, string $id)
-    {
-        // dd($request->all());
-        $siswa = $request->user();
-        $rules = [
-            'nokk' => 'required',
-            'no_akta' => 'required',
-            'agama' => 'required',
-            'kewarganegaraan' => 'required',
-            'kip' => 'required',
-            'prestasi' => 'required',
-            'anak_ke' => 'required',
-            'jumlah_sodara' => 'required',
-            'tb' => 'required',
-            'bb' => 'required',
-            'tinggal_bersama' => 'required',
-            'moda_transportasi' => 'required',
-            'lintang' => 'required',
-            'bujur' => 'required',
-            'jarak_rumah' => 'required',
-            'waktu_tempuh' => 'required',
+        $messages = [
+            'required' => 'Kolom :attribute harus diisi.',
+            'mimes' => 'Format file yang diterima hanya pdf,jpg,jpeg,png.',
         ];
-
-        $pesan = [
-            'nokk.required' => 'NO KK Wajib Diisi!',
-            'nokk.unique' => 'NO KK Sudah Terdaftar!',
-            'no_akta.required' => 'No Akta Wajib Diisi!',
-            'agama.required' => 'Agama Wajib Diisi!',
-            'kewarganegaraan.required' => 'Kewarganegaraan Wajib Diisi!',
-            'kip.required' => 'KIP Wajib Diisi!',
-            'prestasi.required' => 'Alamat Wajib Diisi!',
-            'anak_ke.required' => 'No HP Wajib Diisi!',
-            'jumlah_sodara.required' => 'Password Wajib Diisi!',
-            'tb.required' => 'Tinggi Badan Wajib Diisi!',
-            'bb.required' => 'Berat Badan Wajib Diisi!',
-            'tinggal_bersama.required' => 'Tinggal Bersama Wajib Diisi!',
-            'moda_transportasi.required' => 'Moda Transportasi Wajib Diisi!',
-            'lintang.required' => 'Garis Lintang Wajib Diisi!',
-            'bujur.required' => 'Garis Bujur Wajib Diisi!',
-            'jarak_rumah.required' => 'Jarak Tempuh Wajib Diisi!',
-            'waktu_tempuh.required' => 'Waktu Tempuh Wajib Diisi!',
-        ];
-        
-        $validator = Validator::make($request->all(), $rules, $pesan);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()){
-            // dd($validator->errors());
-            return back()->withInput()->withErrors($validator->errors());
+            return redirect()->back()->withInput()->withErrors($validator->errors());
         }else{
+            
+
+            $user = auth()->guard('siswa')->user();
             DB::beginTransaction();
-
             try{
-
-                if($id == 'new'){
-                    $data = new DataLengkapSiswa();
-                }else{
-                    $data = DataLengkapSiswa::where('id', $id)->first();
+                $data = SiswaDapodik::updateOrCreate(
+                    ['siswa_id' =>  $user->id]
+                );
+                
+                $data->asal_sekolah = $request->asal_sekolah;
+                $data->nis = $request->nis;
+                $data->nomor_peserta = $request->nomor_peserta;
+                $data->nomor_ijasah = $request->nomor_ijasah;
+                $data->hobi = $request->hobi;
+                $data->cita_cita = $request->cita_cita;
+                if($request->hasFile('doc_ijazah')){
+                    $data->doc_ijazah = $this->uploadFile($request->file('doc_ijazah'), $data);
                 }
-                $data->siswa_id = $siswa->id;
-                $data->nokk = $request->nokk;
-                $data->no_akta = $request->no_akta;
-                $data->agama = $request->agama;
-                $data->kewarganegaraan = $request->kewarganegaraan;
-                $data->kip = $request->kip;
-                $data->prestasi = $request->prestasi;
-                $data->anak_ke = $request->anak_ke;
-                $data->jumlah_sodara = $request->jumlah_sodara;
-                $data->tb = $request->tb;
-                $data->bb = $request->bb;
-                $data->tinggal_bersama = $request->tinggal_bersama;
-                $data->moda_transportasi = $request->moda_transportasi;
-                $data->lintang = $request->lintang;
-                $data->bujur = $request->bujur;
-                $data->jarak_rumah = $request->jarak_rumah;
-                $data->waktu_tempuh = $request->waktu_tempuh;
+                if($request->hasFile('doc_akte')){
+                    $data->doc_akte = $this->uploadFile($request->file('doc_akte'), $data);
+                }
+                if($request->hasFile('doc_kk')){
+                    $data->doc_kk = $this->uploadFile($request->file('doc_kk'), $data);
+                }
+                if($request->hasFile('doc_ktp')){
+                    $data->doc_ktp = $this->uploadFile($request->file('doc_ktp'), $data);
+                }
+                if($request->hasFile('doc_kip')){
+                    $data->doc_kip = $this->uploadFile($request->file('doc_kip'), $data);
+                }
                 $data->save();
 
             }catch(\QueryException $e){
@@ -441,9 +304,26 @@ class ProfilController extends Controller
                 dd($e);
             }
             DB::commit();
-            return redirect()->to('/siswa/data-lengkap')->with('success', 'Successfully Add Data');
+            return redirect()->route('siswa.profil.dapodik')->with('success', 'Successfully Add Data');
         }
+    }
 
+    protected function uploadFile($file, $data)
+    {
+        $user = auth()->guard('siswa')->user();
+        $path = 'dokumen/'. $user->id.'/';
+        if ($file) {
+            // Hapus gambar lama jika ada
+            if (isset($data->doc_ijazah)) {
+                Storage::delete($path . $data->doc_ijazah);
+            }
 
+            // $image = file;
+            $imageName = time() . '_' . $file->getClientOriginalName();
+            Storage::disk('public')->putFileAs($path, $file, $imageName);
+
+            // Simpan nama gambar ke dalam data
+            return '/uploads/'.$path.$imageName;
+        }
     }
 }

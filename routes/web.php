@@ -211,6 +211,10 @@ Route::middleware(['auth:siswa'])->namespace('Siswa')->prefix('siswa')->name('si
         
         Route::get('/ortu','ProfilController@ortu')->name('ortu');
         Route::post('/ortu','ProfilController@ortuStore');
+
+        
+        Route::get('/dapodik','ProfilController@dapodik')->name('dapodik');
+        Route::post('/dapodik','ProfilController@dapodikStore');
     });
     // Route::get('/ppdb', 'PPBDController@index')->name('index');
     // Route::store('/profile', 'PPBDController@update')->name('profile.update');
