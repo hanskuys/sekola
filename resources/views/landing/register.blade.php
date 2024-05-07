@@ -13,33 +13,22 @@
                                 @csrf
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="basicInput">Nama Lengkap</label>
-                                        <input type="text" class="form-control @error('nama_siswa') is-invalid @enderror" name="nama_siswa" id="basicInput" placeholder="">
-                                        @error('nama_siswa')
-                                        <div class="invalid-feedback">
-                                            <i class="bx bx-radio-circle"></i>
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <x-input-field type="text" name="nama" id="nama" label="Nama Lengkap" placeholder="Masukan Nama Lengkap" error="{{ $errors->first('nama') }}" />
+
                                 </div>
             
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="basicSelect">Jenis Kelamin</label>
-                                        <select class="form-select @error('jenis_kelamin') is-invalid @enderror" name="jenis_kelamin" id="basicSelect">
-                                            <option selected hidden>Pilih Jenis Kelamin</option>
-                                            <option value="laki-laki">Laki-laki</option>
-                                            <option value="perempuan">Perempuan</option>
-                                        </select>
-                                        @error('jenis_kelamin')
-                                        <div class="invalid-feedback">
-                                            <i class="bx bx-radio-circle"></i>
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <x-select-field
+                                        label="Jenis Kelamin"
+                                        name="jk"
+                                        id="jk"
+                                        value=""
+                                        placeholder="Pilih Jenis Kelamin"
+                                        :options="[
+                                            ['value' => 'L', 'label' => 'Laki-Laki'],
+                                            ['value' => 'P', 'label' => 'Perempuan']
+                                        ]"
+                                    />
                                 </div>
                             </div>
             
@@ -48,7 +37,7 @@
                                 <label for="basicInput">Tempat Tanggal Lahir</label>
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" name="tempat_lahir" id="basicInput" placeholder="">
+                                        <input type="text" class="form-control @error('tempat_lahir') is-invalid @enderror" name="tempat_lahir"  placeholder="" value="{{ old('tempat_lahir')}}">
                                         @error('tempat_lahir')
                                         <div class="invalid-feedback">
                                             <i class="bx bx-radio-circle"></i>
@@ -58,7 +47,7 @@
                                     </div>
                                     <div class="col-6">
                                         
-                                        <input type="date" class="form-control @error('tanggal_lahir') is-invalid @enderror" name="tanggal_lahir" id="basicInput" placeholder="">
+                                        <input type="date" class="form-control tgl @error('tanggal_lahir') is-invalid @enderror" name="tanggal_lahir" id="basicInput" value="{{ old('tanggal_lahir')}}" placeholder="">
                                         @error('tanggal_lahir')
                                         <div class="invalid-feedback">
                                             <i class="bx bx-radio-circle"></i>
@@ -72,34 +61,17 @@
                             {{-- nis&nik --}}
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="basicInput">NISN (Nomor Induk Siswa Nasional)</label>
-                                        <input type="text" class="form-control @error('nisn') is-invalid @enderror" name="nisn" id="basicInput" placeholder="">
-                                        @error('nisn')
-                                        <div class="invalid-feedback">
-                                            <i class="bx bx-radio-circle"></i>
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <x-input-field type="text" name="nisn" id="nisn" label="NISN (Nomor Induk Siswa Nasional)" placeholder="Masukan NISN" error="{{ $errors->first('nisn') }}" />
+
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="basicInput">No Telepon/HP</label>
-                                        <input type="text" class="form-control @error('no_tlp') is-invalid @enderror" name="no_tlp" id="basicInput" placeholder="+62">
-                                        @error('no_tlp')
-                                        <div class="invalid-feedback">
-                                            <i class="bx bx-radio-circle"></i>
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <x-input-field type="text" name="no_tlp" id="no_tlp" label="No Telepon/HP" placeholder="Masukan No Telepon/HP" error="{{ $errors->first('no_tlp') }}" />
                                 </div>
                             </div>
             
                                 <div class="form-group">
                                     <label for="basicInput">Alamat Lengkap Rumah</label>
-                                    <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" name="alamat" id="basicInput" placeholder="" rows="4"></textarea>
+                                    <textarea type="text" class="form-control @error('alamat') is-invalid @enderror" name="alamat" id="basicInput" placeholder="" rows="4">{{ old('alamat') }}</textarea>
                                     @error('alamat')
                                     <div class="invalid-feedback">
                                         <i class="bx bx-radio-circle"></i>
@@ -111,33 +83,12 @@
             
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="basicInput">E-mail</label>
-                                    <div class="form-group position-relative has-icon-left mb-4">
-                                        <input type="text" name="email" class="form-control @error('email') is-invalid @enderror form-control-xl"
-                                            placeholder="Email">
-                                        <div class="form-control-icon">
-                                            <i class="bi bi-at"></i>
-                                        </div>
-                                    </div>
+                                    <x-input-field type="text" name="email" id="email" label="E-mail" placeholder="Masukan E-mail" error="{{ $errors->first('email') }}" />
                                 </div>
             
                                 <div class="col-md-6">
-                                    <div>
-                                        <label for="password">Password</label>
-                                        <div class="form-group position-relative has-icon-left mb-4">
-                                            <input type="password" name="password" id="password"
-                                                class="form-control @error('password') is-invalid @enderror form-control-xl" placeholder="Password">
-                                            <div class="form-control-icon">
-                                                <i class="bi bi-shield-lock"></i>
-                                            </div>
-                                        </div>
-                                        @error('password')
-                                        <div class="invalid-feedback">
-                                            <i class="bx bx-radio-circle"></i>
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
+                                    <x-input-field type="password" name="password" id="password" label="Password" placeholder="Masukan Password" error="{{ $errors->first('password') }}" />
+
                                 </div>
                             </div>
             

@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Siswa;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SiswaDaftarMail;
 class AuthController extends Controller
 {
 
@@ -44,11 +47,10 @@ class AuthController extends Controller
     {
 
         $rules = [
-            'nama_siswa' => 'required',
-            'jenis_kelamin' => 'required',
+            'nama' => 'required',
+            'jk' => 'required',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required',
-            'nis' => 'nullable',
             'nisn' => 'required|unique:siswas,nisn',
             'alamat' => 'required',
             'no_tlp' => 'required',
@@ -58,16 +60,16 @@ class AuthController extends Controller
         ];
 
         $pesan = [
-            'nama_siswa.required' => 'Nama Siswa Wajib Diisi!',
-            'jenis_kelamin.required' => 'Jenis Kelamin Wajib Diisi!',
-            'tempat_lahir.required' => 'Tempat Lahir Wajib Diisi!',
-            'tanggal_lahir.required' => 'Tanggal Lahir Wajib Diisi!',
-            'nis.required' => 'NIS Wajib Diisi!',
+            'nama.required' => 'Nama Siswa harus diisi',
+            'jk.required' => 'Jenis Kelamin harus diisi',
+            'tempat_lahir.required' => 'Tempat Lahir harus diisi',
+            'tanggal_lahir.required' => 'Tanggal Lahir harus diisi',
+            'nisn.required' => 'NIS harus diisi',
             'nisn.unique' => 'NISN Sudah Terdaftar!',
-            'alamat.required' => 'Alamat Wajib Diisi!',
-            'no_tlp.required' => 'No HP Wajib Diisi!',
-            'password.required' => 'Password Wajib Diisi!',
-            'email.required' => 'Email Wajib Diisi!',
+            'alamat.required' => 'Alamat harus diisi',
+            'no_tlp.required' => 'No HP harus diisi',
+            'password.required' => 'Password harus diisi',
+            'email.required' => 'Email harus diisi',
             'email.unique' => 'Email Sudah Terdaftar!',
         ];
 
@@ -81,8 +83,8 @@ class AuthController extends Controller
             try{
 
                 $data = new Siswa();
-                $data->nama_siswa = $request->nama_siswa;
-                $data->jenis_kelamin = $request->jenis_kelamin;
+                $data->nama = $request->nama;
+                $data->jenis_kelamin = $request->jk;
                 $data->tempat_lahir = $request->tempat_lahir;
                 $data->tanggal_lahir = $request->tanggal_lahir;
                 $data->nis = $request->nis;
@@ -100,7 +102,7 @@ class AuthController extends Controller
                 dd($e);
             }
             DB::commit();
-            return redirect()->to('/')->with('success', 'Berhasil Membuat Akun');
+            return redirect()->to('/login')->with('success', 'Berhasil Membuat Akun');
         }
     }
 

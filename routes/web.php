@@ -197,19 +197,34 @@ Route::prefix('guru')->name('guru.')->namespace('Guru')->group(function () {
 Route::middleware(['auth:siswa'])->namespace('Siswa')->prefix('siswa')->name('siswa.')->group(function () {
     
     Route::get('/', 'DashboardController@index')->name('index');
-    Route::get('/profile', 'DashboardController@profile')->name('profile');
-    Route::put('/profile/{id}', 'DashboardController@update')->name('profile.update');
+    // Route::get('/profile', 'DashboardController@profile')->name('profile');
+    // Route::put('/profile/{id}', 'DashboardController@update')->name('profile.update');
 
-    Route::get('/data-ortu', [SiswaLengkapController::class, 'ortu']);
-    Route::match(['post', 'put'],'/data-ortu/update/{id}', [SiswaLengkapController::class, 'update_ortu']);
 
-    Route::get('/data-tambahan', [SiswaLengkapController::class, 'tambahan']);
-    Route::match(['post', 'put'],'/data-tambahan/update/{id}', [SiswaLengkapController::class, 'update_tambahan']);
+    Route::prefix('/profil')->name('profil.')->group(function () {
+        Route::get('/','ProfilController@index')->name('index');
+        Route::post('/','ProfilController@store');
 
-    Route::get('/data-lengkap', [SiswaLengkapController::class, 'lengkap']);
-    Route::match(['post', 'put'],'/data-lengkap/update/{id}', [SiswaLengkapController::class, 'update_lengkap']);
+        Route::get('/detail','ProfilController@detail')->name('detail');
+        Route::post('/detail','ProfilController@detailStore');
 
-    Route::resource('nilais', SiswaNilaiController::class);
+        
+        Route::get('/ortu','ProfilController@ortu')->name('ortu');
+        Route::post('/ortu','ProfilController@ortuStore');
+    });
+    // Route::get('/ppdb', 'PPBDController@index')->name('index');
+    // Route::store('/profile', 'PPBDController@update')->name('profile.update');
+
+    // Route::get('/data-ortu', [SiswaLengkapController::class, 'ortu']);
+    // Route::match(['post', 'put'],'/data-ortu/update/{id}', [SiswaLengkapController::class, 'update_ortu']);
+
+    // Route::get('/data-tambahan', [SiswaLengkapController::class, 'tambahan']);
+    // Route::match(['post', 'put'],'/data-tambahan/update/{id}', [SiswaLengkapController::class, 'update_tambahan']);
+
+    // Route::get('/data-lengkap', [SiswaLengkapController::class, 'lengkap']);
+    // Route::match(['post', 'put'],'/data-lengkap/update/{id}', [SiswaLengkapController::class, 'update_lengkap']);
+
+    // Route::resource('nilais', SiswaNilaiController::class);
 
     
     Route::get('/logout', 'AuthController@logout')->name('logout');

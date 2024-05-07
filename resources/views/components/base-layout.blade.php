@@ -35,7 +35,7 @@
         @elseif(auth()->guard('karyawan')->check())
             @include('components.partials.guru-sidebar')
         @else
-            @include('components.partials.admin-sidebar')
+            @include('components.partials.siswa-sidebar')
         @endif
         <div id="main" class="layout-navbar">
             @include('components.partials.admin-header')

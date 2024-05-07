@@ -1,25 +1,155 @@
 <?php
 
-namespace App\Http\Controllers\CalonSiswa;
+namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
-use App\Models\DataLengkapSiswa;
-use App\Models\DataOrtuSiswa;
-use App\Models\DataTambahanSiswa;
+use App\Models\Siswa;
+use App\Models\SiswaOrtu;
+use App\Models\SiswaDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-class DataLengkapSiswaController extends Controller
+class ProfilController extends Controller
 {
+    public function index()
+    {
+        $data = auth()->guard('siswa')->user();
+        return view('siswa.profil.index',[
+            'data' => $data
+        ]);
+    }
+
+    
+    public function store(Request $request)
+    {
+        // dd($request->all());
+        $rules = [
+            'nokk' => 'required',
+            'no_akta' => 'required',
+            'agama' => 'required',
+            'kewarganegaraan' => 'required',
+            'kip' => 'required',
+            'prestasi' => 'required',
+            'anak_ke' => 'required',
+            'jumlah_sodara' => 'required',
+            'tb' => 'required',
+            'bb' => 'required',
+            'tinggal_bersama' => 'required',
+            'moda_transportasi' => 'required',
+            'lintang' => 'required',
+            'bujur' => 'required',
+            'jarak_rumah' => 'required',
+            'waktu_tempuh' => 'required',
+        ];
+        
+        $messages = [
+            'required' => 'Kolom :attribute harus diisi.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator->errors());
+        }else{
+
+            DB::beginTransaction();
+            try{
+                $data = new Karyawan();
+                $data->nip = $request->nip;
+                $data->nuptk = $request->nuptk;
+                $data->nbm = $request->nbm;
+                $data->nama = $request->nama;
+                $data->jk = $request->jk;
+                $data->tmp_lahir = $request->tmp_lahir;
+                $data->tgl_lahir = $request->tgl_lahir;
+                $data->tgl_mulai = $request->tgl_mulai;
+                $data->email = $request->email;
+                $data->password = Hash::make($request->password);
+                $data->save();
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return response()->json([
+                    'message' => 'Terjadi Kesalahan Server!',
+                ], 422);
+            }
+            DB::commit();
+            return redirect()->to('/admin/gurus')->with('success', 'Successfully Updated Guru');
+
+        }
+    }
+
+    public function detail()
+    {
+
+        return view('siswa.profil.detail');
+    }
+
+    public function detailStore(Request $request)
+    {
+        $rules = [
+            'nokk' => 'required',
+            'no_akta' => 'required',
+            'agama' => 'required',
+            'kewarganegaraan' => 'required',
+            'kip' => 'required',
+            'prestasi' => 'required',
+            'anak_ke' => 'required',
+            'jumlah_sodara' => 'required',
+            'tb' => 'required',
+            'bb' => 'required',
+            'tinggal_bersama' => 'required',
+            'moda_transportasi' => 'required',
+            'lintang' => 'required',
+            'bujur' => 'required',
+            'jarak_rumah' => 'required',
+            'waktu_tempuh' => 'required',
+        ];
+        
+        $messages = [
+            'required' => 'Kolom :attribute harus diisi.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator->errors());
+        }else{
+
+            DB::beginTransaction();
+            try{
+                $data = new Karyawan();
+                $data->nip = $request->nip;
+                $data->nuptk = $request->nuptk;
+                $data->nbm = $request->nbm;
+                $data->nama = $request->nama;
+                $data->jk = $request->jk;
+                $data->tmp_lahir = $request->tmp_lahir;
+                $data->tgl_lahir = $request->tgl_lahir;
+                $data->tgl_mulai = $request->tgl_mulai;
+                $data->email = $request->email;
+                $data->password = Hash::make($request->password);
+                $data->save();
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return response()->json([
+                    'message' => 'Terjadi Kesalahan Server!',
+                ], 422);
+            }
+            DB::commit();
+            return redirect()->to('/admin/gurus')->with('success', 'Successfully Updated Guru');
+
+        }
+    }
+
     public function ortu(Request $request)
     {
         $siswa = $request->user();
 
-        $data = DataOrtuSiswa::where('siswa_id', $siswa->id)->first();
+        $data = SiswaOrtu::where('siswa_id', $siswa->id)->first();
 
-        return view('dashboard.siswa.data-ortu', compact('data'));
+        return view('siswa.profil.ortu', compact('data'));
     }
 
     public function update_ortu(Request $request, string $id)

@@ -20,7 +20,7 @@ class DashboardController extends Controller
         
         $total_pelajaran = Pelajaran::count();
 
-        return view('dashboard.siswa.welcome', compact('kelas', 'total_pelajaran'));
+        return view('siswa.welcome', compact('kelas', 'total_pelajaran'));
     }
 
     public function siswa(Request $request)
@@ -29,7 +29,7 @@ class DashboardController extends Controller
 
         $data = Siswa::where('id', $siswa->id)->first();
 
-        return view('dashboard.siswa.profile', compact('data'));
+        return view('siswa.profile', compact('data'));
     }
 
     public function update(Request $request, string $id)

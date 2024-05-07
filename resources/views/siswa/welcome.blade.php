@@ -1,5 +1,4 @@
-@extends('dashboard.siswa.base')
-@section('content')
+<x-base-layout>
 <div class="page-heading d-flex justify-content-between items-center">
     <h3>Dashboard Siswa</h3>
 </div>
@@ -45,4 +44,4 @@
         </div>
     </section>
 </div>
-@endsection
+</x-base-layout>

@@ -4,7 +4,8 @@
             <span class="text-danger">*</span>
         @endif
     </label>
-    <input type="{{ $type }}" class="form-control {{ $inputClass ?? '' }} {{ $errors->has($name) ? 'is-invalid' : '' }}" id="field-{{ $id }}" name="{{ $name }}" placeholder="{{ $placeholder }}" value="{{ $value ?? old($name) }}">
+    <input type="{{ $type }}" class="form-control {{ $inputClass ?? '' }} {{ $errors->has($name) ? 'is-invalid' : '' }}" id="field-{{ $id }}" name="{{ $name }}" 
+    placeholder="{{ $placeholder ?? '' }}" value="{{ $value ?? old($name) }}">
     @if(!isset($isAjax) && $errors->has($name))
         <x-input-error :messages="$errors->get($name)" class="mt-2" />
     @else
