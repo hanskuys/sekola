@@ -99,6 +99,60 @@
                 // Tambahkan fungsi untuk edit dan delete dengan cara yang serupa
             });
 
+    
+            function hapus(id)
+            {
+                
+                Swal.fire({
+                    title: "Anda Yakin?",
+                    text: "Data Yang Dihapus Tidak Akan Bisa Dikembalikan",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Tidak, Batalkan!',
+                    reverseButtons: true,
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#af1310',
+                    cancelButtonColor: '#fffff',
+                })
+                .then((result) => {
+                    if (result.value) {
+                    $.ajax({
+                        url: "/admin/master/kelas/" + id +"/delete",
+                        type: 'DELETE',
+                        dataType: 'json',
+                        data: {
+                            "_token": $("meta[name='csrf-token']").attr("content"),
+                        },
+                        success: function (result) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: result.message,
+                                icon: 'success',
+                                toast : true,
+                                position : 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                            $('#datatable').DataTable().ajax.reload();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: "Terjadi Kesalahan Di Server",
+                                icon: 'success',
+                                toast : true,
+                                position : 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        }
+                    });
+                    }
+                });
+            }
         </script>
     @endpush
 </x-base-layout>

@@ -2,7 +2,7 @@
 
     <div class="page-heading d-flex justify-content-between items-center">
         <h3>Data {{ $data->nama}}</h3>
-        <a href="/admin/gurus/{{$data->id }}/edit" class="btn icon btn-warning me-2"><i class="bi bi-pencil"></i></a>
+        <a href="{{ route('admin.guru.edit', $data->id) }}" class="btn icon btn-warning me-2"><i class="bi bi-pencil"></i></a>
     </div>
     
     <div class="page-content">

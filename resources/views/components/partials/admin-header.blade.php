@@ -11,7 +11,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            @if(auth()->guard('web')->check())
+            @if(auth()->guard('web')->check() && request()->is('admin/*'))
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <div class="dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="">
@@ -42,7 +42,7 @@
                     </ul>
                 </div>
             </div>
-            @elseif(auth()->guard('karyawan')->check())
+            @elseif(auth()->guard('karyawan')->check() && request()->is('guru/*'))
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <div class="dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false" class="">

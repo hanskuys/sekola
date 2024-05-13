@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Auth;
 use App\Models\KelasBridge;
 use App\Models\Pelajaran;
 use App\Models\Siswa;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
+use App\Models\AbsenDetail;
 class DashboardController extends Controller
 {
 
@@ -24,13 +25,29 @@ class DashboardController extends Controller
         return view('siswa.welcome', compact('kelas', 'total_pelajaran'));
     }
 
-    public function siswa(Request $request)
+    public function absen(Request $request)
     {
-        $siswa = $request->user();
+        return view('siswa.absen');
+    }
 
-        $data = Siswa::where('id', $siswa->id)->first();
+    public function absenData(Request $request)
+    {
 
-        return view('siswa.profile', compact('data'));
+        $siswa = auth()->guard('siswa')->user();
+
+        $query = AbsenDetail::with('absen')->where('siswa_id', $siswa->id)->get();
+
+        $data = collect([]);
+
+        foreach($query as $q){
+            $data->push([
+                'title' => $q->status,
+                'start' => Carbon::parse($q->absen->tgl),
+                'end' => Carbon::parse($q->absen->tgl),
+            ]);
+        }
+
+        return response()->json($data);
     }
 
     public function update(Request $request, string $id)
@@ -51,5 +68,13 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->to('/siswa')->with('success', 'Successfully Changed Password');
+    }
+
+    
+    public function logout()
+    {
+        Auth::guard('siswa')->logout();
+
+        return redirect()->to('/login')->with('success', 'Successfully Logout');
     }
 }

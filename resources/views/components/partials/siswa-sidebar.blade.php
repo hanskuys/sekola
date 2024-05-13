@@ -33,6 +33,42 @@
 
                 @if (auth()->user()->status)
                 
+                <li class="sidebar-item has-sub {{ (request()->is('siswa/profil/*', 'siswa/profil')) ? "active" : "" }}"">
+                    <a href="#" class="sidebar-link">
+                        <i class="fa fa-user"></i>
+                        <span>Profil</span>
+                    </a>
+                    
+                    <ul class="submenu submenu-closed">
+                        <li class="submenu-item">
+                            <a href="{{ route('siswa.profil.index') }}" class="submenu-link">Data Diri</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{{ route('siswa.profil.detail') }}" class="submenu-link">Data Lengkap</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{{ route('siswa.profil.ortu') }}" class="submenu-link">Data Orang Tua</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="{{ route('siswa.profil.dapodik') }}" class="submenu-link">Data Dapodik</a>
+                        </li>
+                    </ul>
+    
+                </li>
+                <li
+                    class="sidebar-item {{ (request()->is('siswa/absen')) ? "active" : "" }}">
+                    <a href="{{ route('siswa.absen') }}" class='sidebar-link'>
+                        <i class="far fa-calendar-check"></i>
+                        <span>Absen</span>
+                    </a>
+                </li>
+                <li
+                    class="sidebar-item {{ (request()->is('nilai')) ? "active" : "" }}">
+                    <a href="{{ route('siswa.nilai.index') }}" class='sidebar-link'>
+                        <i class="fas fa-list-check"></i>
+                        <span>Nilai</span>
+                    </a>
+                </li>
                 @else
                 
                 <li class="sidebar-item {{ (request()->is('siswa/profil/biodata')) ? "active" : "" }}">
@@ -74,6 +110,7 @@
                         @endif
                     </a>
                 </li>
+                @endif
                 <li
                     class="sidebar-item">
                     <a href="{{ route('siswa.logout') }}" class='sidebar-link'>
@@ -81,7 +118,6 @@
                         <span>Logout</span>
                     </a>
                 </li>
-                @endif
             </ul>
         </div>
     </div>

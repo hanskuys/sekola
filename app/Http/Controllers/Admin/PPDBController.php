@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-// use App\Models\Data_lengkap_siswa;
-// use App\Models\Data_ortu_siswa;
-// use App\Models\Data_tambahan_siswa;
-use App\Models\Siswa;
 use Illuminate\Http\Request;
 use DataTables;
+use DB;
+use Illuminate\Support\Facades\Validator;
 
+use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\KelasBridge;
+use App\Models\TahunAjaran;
 
 class PPDBController extends Controller
 {
@@ -21,7 +21,11 @@ class PPDBController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Siswa::where('status', 0)->get();
+            $data = Siswa::where('status', 0)
+            // ->whereHas('detail')
+            // ->whereHas('ortu')
+            // ->whereHas('dapodik')
+            ->get();
             
             return DataTables::of($data)
             ->addColumn('action', function($row){
@@ -41,32 +45,52 @@ class PPDBController extends Controller
     public function show(string $id)
     {
         $data = Siswa::with('detail')->where('id',$id)->first();
-
-        return view('admin.ppdb.show', compact('data'));
+        $kelas = Kelas::select('id as value', 'nama as label')->orderBy('nama')->get()->toArray();
+        return view('admin.ppdb.show', compact('data', 'kelas'));
     }
     
-    public function konfirmasi(string $id)
+    public function konfirmasi(Request $request)
     {
-        Data_tambahan_siswa::where('siswa_id', $id)->update(['status' => 1]);
         
-        $kelas = Kelas::withCount([
-            'bridge'
-        ])->where('tingkat', 7)->get();
+        $rules = [
+            'kelas' => 'required',
+        ];
 
-        foreach($kelas as $k){
+        $pesan = [
+            'kelas.required' => 'Kelas Wajib Diisi!',
+        ];
 
-            if($k->brdige_count+1 < $k->jml){
-                $bridge = new KelasBridge();
-                $bridge->siswa_id = $id;
-                // $k->bridge->save($bridge);
-                $bridge->kelas_id = $k->id;
-                $bridge->save();
-                break;
-            };
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return response()->json([
+                'message' => 'Periksa Form',
+                'errors' => $validator->errors(),
+            ], 422);
+        }else{
+
+            DB::beginTransaction();
+            try{
+                $tahun = TahunAjaran::where('aktif', 1)->first();
+
+                $data = new KelasBridge();
+                $data->siswa_id = $request->siswa_id;
+                $data->kelas_id = $request->kelas;
+                $data->tahun_id = $tahun->id;
+                $data->save();
+
+                $siswa = Siswa::where('id', $request->siswa_id)->update(['status' => 1]);
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return response()->json([
+                    'message' => 'Terjadi Kesalahan Server!',
+                ], 422);
+            }
+            DB::commit();
+            return response()->json([
+                'message' => 'Data Berhasil Disimpan!',
+            ], 200);
         }
-
-        return redirect()->to('/admin/pendaftarans')->with('success', 'Successfully Change Status');
-
     }
     /**
      * Show the form for editing the specified resource.

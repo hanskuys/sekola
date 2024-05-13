@@ -120,13 +120,13 @@ class GuruController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $guru = Karyawan::find($id);
-        $guruDetail = Karyawan_detail::find($id);
-        
-
-        return view('admin.guru.edit', compact('guru', 'guruDetail'));
+        $data = Karyawan::find($id);
+    
+        return view('admin.guru.edit', [
+            'data' => $data
+        ]);
     }
 
     /**
@@ -134,58 +134,52 @@ class GuruController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validate = $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
+        
+        $rules = [
             'nip' => 'required',
-            'nuptk' => 'required',
-            'nbm' => 'required',
-            'tanggal_mulai' => 'required',
-            'jenis_kelamin' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
-            'status' => 'required',
-        ]);
+            'nama' => 'required',
+            'email' => 'required|unique:karyawans,email',
+            'password' => 'required',
+        ];
 
-        // Update data in the 'karyawan' table
-        Karyawan::where('id', $id)->update([
-            'nama' => $validate['nama'],
-            'email' => $validate['email'],
-            // Add other columns for 'karyawan' as needed
-        ]);
+        $pesan = [
+            'nip.required' => 'NIP harus diisi',
+            'nama.required' => 'Nama harus diisi',
+            'email.required' => 'Email harus diisi',
+            'email.required' => 'Email sudah digunakan',
+            'password.required' => 'Password harus diisi',
+        ];
 
-        // Check if there is an associated entry in 'karyawan_detail'
-        $karyawanDetail = Karyawan_detail::where('karyawan_id', $id)->first();
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return redirect()->back()->withInput()->withErrors($validator->errors());
+        }else{
 
-        if ($karyawanDetail) {
-            // Update data in the 'karyawan_detail' table
-            $karyawanDetail->update([
-                'nip' => $validate['nip'],
-                'nuptk' => $validate['nuptk'],
-                'nbm' => $validate['nbm'],
-                'tanggal_mulai' => $validate['tanggal_mulai'],
-                'jenis_kelamin' => $validate['jenis_kelamin'],
-                'tempat_lahir' => $validate['tempat_lahir'],
-                'tanggal_lahir' => $validate['tanggal_lahir'],
-                'status' => $validate['status'],
-                // Add other columns for 'karyawan_detail' as needed
-            ]);
-        } else {
-            // Create a new entry in the 'karyawan_detail' table
-            Karyawan_detail::create([
-                'karyawan_id' => $id,
-                'nip' => $validate['nip'],
-                'nuptk' => $validate['nuptk'],
-                'nbm' => $validate['nbm'],
-                'tanggal_mulai' => $validate['tanggal_mulai'],
-                'jenis_kelamin' => $validate['jenis_kelamin'],
-                'tempat_lahir' => $validate['tempat_lahir'],
-                'tanggal_lahir' => $validate['tanggal_lahir'],
-                'status' => $validate['status'],
-                // Add other columns for 'karyawan_detail' as needed
-            ]);
+            DB::beginTransaction();
+            try{
+                $data = Karyawan::find($id);
+                $data->nip = $request->nip;
+                $data->nuptk = $request->nuptk;
+                $data->nbm = $request->nbm;
+                $data->nama = $request->nama;
+                $data->jk = $request->jk;
+                $data->tmp_lahir = $request->tmp_lahir;
+                $data->tgl_lahir = $request->tgl_lahir;
+                $data->tgl_mulai = $request->tgl_mulai;
+                $data->email = $request->email;
+                $data->password = Hash::make($request->password);
+                $data->save();
+
+            }catch(\QueryException $e){
+                DB::rollback();
+                return response()->json([
+                    'message' => 'Terjadi Kesalahan Server!',
+                ], 422);
+            }
+            DB::commit();
+            return redirect()->to('/admin/gurus')->with('success', 'Successfully Updated Guru');
+
         }
-        return redirect()->to('/admin/gurus')->with('success', 'Successfully Updated Guru');
     }
 
     /**

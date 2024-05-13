@@ -1,5 +1,5 @@
-@extends('dashboard.admin.base')
-@section('content')
+<x-base-layout>
+
 <div class="page-heading d-flex justify-content-between items-center">
     <h3>Edit Kelas</h3>
 </div>
@@ -8,26 +8,15 @@
     <section class="section">
         <div class="card">
             <div class="card-body">
-                <form action="/admin/kategori-kelases/{{ $kelas->id }}" method="POST">
+                <form action="{{ route('admin.kelas.update', $data->id)}}" method="POST">
                     @csrf
-                    <input type="hidden" name="_method" value="PUT">
-
-                    <div class="form-group">
-                        <label for="basicInput">Nama Kelas</label>
-                        <input type="text" value="{{ $kelas->kelas }}" class="form-control @error('kelas') is-invalid @enderror" name="kelas" id="basicInput" placeholder="7A">
-                        @error('kelas')
-                        <div class="invalid-feedback">
-                            <i class="bx bx-radio-circle"></i>
-                            {{ $message }}
-                        </div>
-                        @enderror
-                    </div>
+                    <x-input-field type="text"  name="nama" id="nama" label="Nama Lengkap" value="{{ $data->nama}}" placeholder="Masukan Nama Lengkap" error="{{ $errors->first('nama') }}" />
                     <div class="form-group">
                         <label for="basicInput">Wali Kelas</label>
                         <select class="form-control @error('karyawan_id') is-invalid @enderror" id="karyawan_id" name="karyawan_id">
                             <option value="" selected disabled>Pilih Guru</option>
                             @foreach($karyawan as $karyawanItem)
-                                <option value="{{ $karyawanItem->id }}" {{ $kelas->karyawan_id == $karyawanItem->id ? 'selected="selected"' : '' }}>{{ $karyawanItem->nama }}</option>
+                                <option value="{{ $karyawanItem->id }}" {{ $data->karyawan_id == $karyawanItem->id ? 'selected="selected"' : '' }}>{{ $karyawanItem->nama }}</option>
                             @endforeach
                         </select>
                         @error('karyawan_id')
@@ -41,7 +30,7 @@
                         <label for="basicInput">Maksimal Siswa</label>
                         <div class="row">
                             <div class="col-4">
-                                <input type="number" class="form-control @error('lk') is-invalid @enderror" value="{{ $kelas->lk }}" name="lk" id="field-lk" placeholder="Laki-Laki">
+                                <input type="number" class="form-control @error('lk') is-invalid @enderror" value="{{ $data->lk }}" name="lk" id="field-lk" placeholder="Laki-Laki">
                                 @error('lk')
                                 <div class="invalid-feedback">
                                     <i class="bx bx-radio-circle"></i>
@@ -50,7 +39,7 @@
                                 @enderror
                             </div>
                             <div class="col-4">
-                                <input type="number" class="form-control @error('pr') is-invalid @enderror" value="{{ $kelas->pr }}" name="pr" id="field-pr" placeholder="Perempuan">
+                                <input type="number" class="form-control @error('pr') is-invalid @enderror" value="{{ $data->pr }}" name="pr" id="field-pr" placeholder="Perempuan">
                                 @error('pr')
                                 <div class="invalid-feedback">
                                     <i class="bx bx-radio-circle"></i>
@@ -59,7 +48,7 @@
                                 @enderror
                             </div>
                             <div class="col-4">
-                                <input type="number" class="form-control @error('jml') is-invalid @enderror" value="{{ $kelas->jml }}" name="jml" id="field-total" readonly placeholder="Total">
+                                <input type="number" class="form-control @error('jml') is-invalid @enderror" value="{{ $data->jml }}" name="jml" id="field-total" readonly placeholder="Total">
                                 @error('jml')
                                 <div class="invalid-feedback">
                                     <i class="bx bx-radio-circle"></i>
@@ -77,7 +66,6 @@
         </div>
     </section>
 </div>
-@endsection
 @push('scripts')
 
 <script>
@@ -99,3 +87,4 @@
  });
 </script>    
 @endpush
+</x-base-layout>

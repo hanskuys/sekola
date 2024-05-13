@@ -1,28 +1,4 @@
 <?php
-
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\GuruController as AdminGuruController;
-use App\Http\Controllers\Admin\GuruMatpelController;
-use App\Http\Controllers\Admin\JabatanController;
-use App\Http\Controllers\Admin\KategoriKelasController as AdminKategoriKelasController;
-use App\Http\Controllers\Admin\PelajaranController as AdminPelajaranController;
-use App\Http\Controllers\Admin\SiswaController as AdminSiswaController;
-use App\Http\Controllers\Admin\TahunAjaranController as AdminTahunAjaranController;
-use App\Http\Controllers\Admin\KelasController as AdminKelasController;
-use App\Http\Controllers\Admin\NilaiController as AdminNilaiController;
-use App\Http\Controllers\Admin\PendaftaranController as AdminPendaftaranController;
-use App\Http\Controllers\Admin\TugasController;
-use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
-use App\Http\Controllers\Guru\NilaiController as GuruNilaiController;
-use App\Http\Controllers\Guru\AbsenController as GuruAbsenController;
-use App\Http\Controllers\Guru\SiswaController as GuruSiswaController;
-
-use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
-use App\Http\Controllers\Siswa\NilaiController as SiswaNilaiController;
-
-use App\Http\Controllers\CalonSiswa\DataSiswaController as DataSiswaController;
-use App\Http\Controllers\CalonSiswa\DataLengkapSiswaController as SiswaLengkapController;
-
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,14 +21,8 @@ Route::middleware(['guest'])->group(function () {
     
     Route::get('/daftar','AuthController@register')->name('daftar');
     Route::post('/daftar','AuthController@store');
-    
-    
-    // Route::get('/admin','AuthController@admin')->name('admin');
-    // Route::post('/login-admin','AuthController@loginAdmin')->name('loginAdmin');
 });
 
-
-// Route::middleware(['auth'])->get('logout', [AuthController::class, 'logout']);
 
 Route::prefix('admin')->namespace('Admin')->name('admin.')->group(function () {
     
@@ -64,10 +34,8 @@ Route::prefix('admin')->namespace('Admin')->name('admin.')->group(function () {
 
         Route::prefix('/ppdb')->name('ppdb.')->group(function () {
             Route::get('/','PPDBController@index')->name('index');
+            Route::post('/konfirmasi','PPDBController@konfirmasi')->name('konfirmasi');
             Route::get('/{id}','PPDBController@show')->name('show');
-            Route::get('/{id}/edit','PPDBController@edit')->name('edit');
-            Route::post('{id}/update','PPDBController@update')->name('update');
-            Route::delete('/{id}/delete','PPDBController@destroy')->name('delete');
         });
 
         
@@ -91,6 +59,7 @@ Route::prefix('admin')->namespace('Admin')->name('admin.')->group(function () {
                 Route::get('/{id}/edit','TahunController@edit')->name('edit');
                 Route::post('{id}/update','TahunController@update')->name('update');
                 Route::delete('/{id}/delete','TahunController@destroy')->name('delete');
+                Route::post('{id}/status','TahunController@status')->name('status');
             });
 
             Route::prefix('/pelajaran')->name('pelajaran.')->group(function () {
@@ -197,6 +166,12 @@ Route::prefix('guru')->name('guru.')->namespace('Guru')->group(function () {
 Route::middleware(['auth:siswa'])->namespace('Siswa')->prefix('siswa')->name('siswa.')->group(function () {
     
     Route::get('/', 'DashboardController@index')->name('index');
+    Route::get('/absen', 'DashboardController@absen')->name('absen');
+    Route::get('/absen/data', 'DashboardController@absenData')->name('absen.data');
+    // Route::get('/nilai
+    // ', 'DashboardController@nilai
+    // ')->name('nilai
+    // ');
     // Route::get('/profile', 'DashboardController@profile')->name('profile');
     // Route::put('/profile/{id}', 'DashboardController@update')->name('profile.update');
 
@@ -216,21 +191,16 @@ Route::middleware(['auth:siswa'])->namespace('Siswa')->prefix('siswa')->name('si
         Route::get('/dapodik','ProfilController@dapodik')->name('dapodik');
         Route::post('/dapodik','ProfilController@dapodikStore');
     });
-    // Route::get('/ppdb', 'PPBDController@index')->name('index');
-    // Route::store('/profile', 'PPBDController@update')->name('profile.update');
-
-    // Route::get('/data-ortu', [SiswaLengkapController::class, 'ortu']);
-    // Route::match(['post', 'put'],'/data-ortu/update/{id}', [SiswaLengkapController::class, 'update_ortu']);
-
-    // Route::get('/data-tambahan', [SiswaLengkapController::class, 'tambahan']);
-    // Route::match(['post', 'put'],'/data-tambahan/update/{id}', [SiswaLengkapController::class, 'update_tambahan']);
-
-    // Route::get('/data-lengkap', [SiswaLengkapController::class, 'lengkap']);
-    // Route::match(['post', 'put'],'/data-lengkap/update/{id}', [SiswaLengkapController::class, 'update_lengkap']);
-
-    // Route::resource('nilais', SiswaNilaiController::class);
-
     
-    Route::get('/logout', 'AuthController@logout')->name('logout');
+
+    Route::prefix('/nilai')->name('nilai.')->group(function () {
+        Route::get('/','NilaiController@index')->name('index');
+        Route::get('/create','NilaiController@create')->name('create');
+        Route::post('/store','NilaiController@store')->name('store');
+        Route::get('/data','NilaiController@data')->name('data');
+        Route::get('/{id}','NilaiController@show')->name('show');
+    });
+
+    Route::get('/logout', 'DashboardController@logout')->name('logout');
 });
 

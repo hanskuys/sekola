@@ -4,7 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    
+    @if(auth()->guard('web')->check() && request()->is('admin/*'))
+        <title>Admin</title>
+    @elseif(auth()->guard('karyawan')->check() && request()->is('guru/*'))
+        <title>Guru</title>
+    @elseif(auth()->guard('siswa')->check() && request()->is('siswa/*', 'siswa'))
+        <title>Siswa</title>
+    @endif
+    <div id="mai
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
@@ -30,16 +38,15 @@
 <body>
     <div id="app">
 
-        @if(auth()->guard('web')->check())
+        @if(auth()->guard('web')->check() && request()->is('admin/*'))
             @include('components.partials.admin-sidebar')
-        @elseif(auth()->guard('karyawan')->check())
+        @elseif(auth()->guard('karyawan')->check() && request()->is('guru/*'))
             @include('components.partials.guru-sidebar')
-        @else
+        @elseif(auth()->guard('siswa')->check() && request()->is('siswa/*', 'siswa'))
             @include('components.partials.siswa-sidebar')
         @endif
         <div id="main" class="layout-navbar">
             @include('components.partials.admin-header')
-
             <div id="main-content">
                 @include('components.partials.flash')
                 {{ $slot }}

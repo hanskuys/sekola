@@ -14,6 +14,7 @@
                         <thead>
                             <tr>
                                 <th>Tahun Ajaran</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -67,6 +68,9 @@
                     columns: [{
                             data: 'nama',
                             name: 'nama'
+                        },{
+                            data: 'active',
+                            name: 'active'
                         },
                         {
                             data: 'action',
@@ -219,6 +223,59 @@
                 });
             }
     
+            function aktif(id)
+            {
+                
+                Swal.fire({
+                    title: "Aktifkan Tahun?",
+                    text: "Tahun ajaran yang dipilih adalah yang saat ini berjalan",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya!',
+                    cancelButtonText: 'Tidak!',
+                    reverseButtons: true,
+                    allowOutsideClick: false,
+                    confirmButtonColor: '#af1310',
+                    cancelButtonColor: '#fffff',
+                })
+                .then((result) => {
+                    if (result.value) {
+                    $.ajax({
+                        url: "/admin/master/tahun-ajaran/" + id +"/status",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            "_token": $("meta[name='csrf-token']").attr("content"),
+                        },
+                        success: function (result) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: result.message,
+                                icon: 'success',
+                                toast : true,
+                                position : 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                            $('#datatable').DataTable().ajax.reload();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: "Terjadi Kesalahan Di Server",
+                                icon: 'success',
+                                toast : true,
+                                position : 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
+                        }
+                    });
+                    }
+                });
+            }
         </script>
     @endpush
     </x-base-layout>

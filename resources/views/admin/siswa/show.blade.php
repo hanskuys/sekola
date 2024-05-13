@@ -169,18 +169,6 @@
                     </table>
                 </div>
             </div>
-            
-            <div class="card">
-                <div class="card-body">
-                    <div class="text-center">
-                        <form action="/admin/pendaftaran/konfirmasi/{{ $data->id }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary">Konfirmasi</button>
-                        </form>
-                    </div>
-                </form>
-                </div>
-            </div>
         </section>
     </div>
 </x-base-layout>

@@ -16,7 +16,7 @@ class TahunController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = TahunAjaran::orderBy('nama')->get();
+            $data = TahunAjaran::orderBy('aktif', 'ASC')->get();
             
             return DataTables::of($data)
             ->addColumn('action', function($row){
@@ -26,7 +26,15 @@ class TahunController extends Controller
                 $btn .= '</div>';
                 return $btn; 
             })
-            ->rawColumns(['action']) 
+            ->addColumn('active', function($row){
+                if($row->aktif){
+                    $btn = '<button class="btn btn-light btn-sm mx-1" onclick="aktif('.$row->id.')">Aktif</button>';
+                }else{
+                    $btn = '<button class="btn btn-danger btn-sm mx-1" onclick="aktif('.$row->id.')">Tidak AKtif</button>';
+                }
+                return $btn; 
+            })
+            ->rawColumns(['action', 'active']) 
             ->make(true);
         }
         return view('admin.tahun');
@@ -152,6 +160,26 @@ class TahunController extends Controller
         DB::commit();
         return response()->json([
             'message' => 'Tahun Ajaran Berhasil Dihapus!',
+        ], 200);
+    }
+
+    
+    public function status(string $id)
+    {
+        
+        DB::beginTransaction();
+        try{
+            TahunAjaran::where('id', '!=', $id)->update(['aktif' => 0]);
+            TahunAjaran::where('id', $id)->update(['aktif' => 1]);
+        }catch(\QueryException $e){
+            DB::rollback();
+            return response()->json([
+                'message' => 'Data Gagal Disimpan!',
+            ], 422);
+        }
+        DB::commit();
+        return response()->json([
+            'message' => 'Data Berhasil Disimpan!',
         ], 200);
     }
 }

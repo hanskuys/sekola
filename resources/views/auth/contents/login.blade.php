@@ -13,7 +13,7 @@
 
     <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Log in</button>
     <div class="text-center mt-5">
-        <p class="text-xs">Calon Siswa Buat Akun <a class="text-blue-800" href="/pendaftaran"> Disini!</a>
+        <p class="text-xs">Calon Siswa Buat Akun <a class="text-blue-800" href="{{ route('daftar')}}"> Disini!</a>
         </p>
     </div>
 </form>
